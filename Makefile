@@ -1,14 +1,11 @@
 # reproducible project python environment
 #
 .ONESHELL: # use same shell as make when invoking shell commands
-.PHONY: venv build datalake freeze clean list help
 
 # define which python executable should be used to create the project environment
 PYTHON ?= /opt/python/3.8/bin/python
 # project name uses current project directory (this is the github repo name)
 PROJECT ?= $(shell basename $(CURDIR))
-# version of WELdatalake to fetch
-WELDATALAKE_VER ?= 0.2.0
 
 # check that python executable works
 PYTHON_VERSION := $(shell $(PYTHON) --version 2> /dev/null)
@@ -37,10 +34,6 @@ build: venv ## build virtual environment and git config
 freeze: venv ## takes snapshot of current python dependency versions and saves into requirements.txt, use pipdeptree to preserve top level dependencies
 	. .venv/bin/activate
 	pipdeptree -f --warn silence | grep -E '^[a-zA-Z0-9\-]+' > requirements.txt
-
-datalake: venv ## add custom WELdatalake dependency
-	. .venv/bin/activate
-	pip install "http://au-aws-teamcity.wde.woodside.com.au/repository/download/PythonPackages_WELdatalakePy/.lastSuccessful/WELdatalake-${WELDATALAKE_VER}.tar.gz?guest=1"
 
 clean: ## clean up virtual environment and Jupyter kernel
 	. .venv/bin/activate
